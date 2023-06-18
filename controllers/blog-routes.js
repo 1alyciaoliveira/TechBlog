@@ -3,19 +3,20 @@ const Post = require('../models/Post');
 
 //get all posts
 router.get('/', async (req, res) => {
-    try {
-    const posts = await Post.findAll();
-    res.render('home', posts);
-    } catch (err) {
-        res.status(500).json(err);
-    }
+    const postsData = await Post.findAll().catch((err) => {
+        res.json(err);
+    });
+
+    const posts = postsData.map((post) => post.get({ plain: true }));
+    res.render('home', { posts });
 });
 
 //get one post
 router.get('/post/:id', async (req, res) => {
     try {
-        const postData = await Post.findByPk(req.params.id);
-        res.render('post', postData);
+        const postsData = await Post.findByPk(req.params.id);
+        const posts = postsData.get({ plain: true });
+        res.render('post', posts);
     } catch (err) {
         res.status(500).json(err);
     }
