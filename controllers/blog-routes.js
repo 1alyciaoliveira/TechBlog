@@ -22,4 +22,30 @@ router.get('/post/:id', async (req, res) => {
     }
 });
 
+//get all posts by user
+router.get('/dashboard', async (req, res) => {
+    try {
+        const postsData = await Post.findAll({
+            where: {
+                user_id: req.session.user_id,
+            },
+        });
+        const posts = postsData.map((post) => post.get({ plain: true }));
+        res.render('dashboard', { posts });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+//get login page
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+//get register page
+router.get(/register/, (req, res) => {
+    res.render('register');
+});
+
+
 module.exports = router;
